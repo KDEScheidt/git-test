@@ -14,11 +14,11 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom = (100, 300))
         self.gravity = 0
 
-    def player_input(self):
-        keys = pygame.key.get_pressed()
-        if (keys[pygame.K_SPACE] or keys[pygame.K_UP]) and self.rect.bottom >= 300:
-            pygame.mixer.Sound.play(self.jump_sound)
-            self.gravity = -18
+    def handle_player_input(self, event):
+        if event.type == pygame.KEYDOWN:
+            if (event.key == pygame.K_SPACE or event.key == pygame.K_UP) and self.rect.bottom >= 300:
+                pygame.mixer.Sound.play(self.jump_sound)
+                self.gravity = -18
 
     def apply_gravity(self):
         self.gravity += 1
@@ -36,7 +36,7 @@ class Player(pygame.sprite.Sprite):
             self.image = self.player_walk[int(self.player_index)]
 
     def update(self):
-        self.player_input()
+        self.handle_player_input(event)
         self.apply_gravity()
         self.animation_state()
 
@@ -154,6 +154,8 @@ while True:
             if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
                 game_active = 1
                 start_time = int(pygame.time.get_ticks() / 1000)
+
+            player.sprite.handle_player_input(event)
 
         if game_active == 1:
             if event.type == obstacle_timer:
